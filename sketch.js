@@ -144,8 +144,8 @@ function setup() {
   clock9Groups = generateDotPath(clock9Raw, clockN);
   clock12Groups = generateDotPath(clock12Raw, clockN);
   
-  let g = [310, 20, 0, 300, -315, 20, -80, -265].map(function(n){
-    return (n/740) * width
+  let g = [310, 20, 0, 300, -315, 20, -70, -265].map(function(n){
+    return (n/780) * width
   })
   
   globalPoints = [
