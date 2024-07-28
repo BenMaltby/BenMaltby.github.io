@@ -6,3 +6,12 @@ html, body {
 canvas {
   display: block;
 }
+
+div.wrap {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  overflow: hidden;
+}
