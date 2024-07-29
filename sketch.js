@@ -231,7 +231,7 @@ function vectorToPoints(ps){
 }
 
 function draw() { 
-  background(0, 0, 10, 0.01);
+  background(0, 0, 10, 1);
   translate(width/2, height/2)
   
   hourAngle = (hour() / 12) * TAU - PI/2
