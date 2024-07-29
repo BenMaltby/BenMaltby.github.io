@@ -15,10 +15,12 @@ let clock12Raw = [
   [0.72, 68.00, 14.08, 68.00, 22.14, 64.00, 22.14, 50.00, 22.14, 36.00, 22.14, 24.00, 22.14, 10.00, 22.14, -4.00, 22.14, -16.00, 22.14, -30.00, 22.14, -44.00, 22.14, -56.00, 22.14, -70.00, 22.14, -84.00, 22.14, -96.00, 22.14, -110.00, 22.04, -110.00, 9.30, -106.00, -3.16, -102.00, -15.64, -98.00, -28.14, -92.00, -40.62, -88.00, -46.08, -78.00, -45.80, -66.00, -33.28, -70.00, -20.76, -74.00, -8.26, -80.00, -0.56, -76.00, -0.56, -64.00, -0.56, -50.00, -0.56, -36.00, -0.56, -24.00, -0.56, -10.00, -0.56, 4.00, -0.56, 16.00, -0.56, 30.00, -0.56, 44.00, -0.56, 56.00, 0.72, 68.00, 14.08, 68.00], [89.86, 68.00, 103.18, 68.00, 116.54, 68.00, 129.86, 68.00, 143.22, 68.00, 156.52, 68.00, 169.86, 68.00, 183.20, 68.00, 196.52, 68.00, 204.76, 64.00, 204.76, 50.00, 202.90, 50.00, 189.56, 50.00, 176.22, 50.00, 162.90, 50.00, 149.56, 50.00, 136.22, 50.00, 122.88, 50.00, 119.60, 46.00, 128.64, 36.00, 137.66, 26.00, 146.68, 16.00, 155.72, 6.00, 164.76, -4.00, 173.44, -14.00, 181.40, -24.00, 188.34, -36.00, 193.68, -48.00, 196.46, -60.00, 195.74, -74.00, 191.54, -86.00, 183.64, -98.00, 172.92, -106.00, 160.44, -110.00, 147.28, -112.00, 133.94, -112.00, 120.94, -108.00, 108.84, -102.00, 98.62, -94.00, 90.92, -84.00, 86.38, -72.00, 84.90, -58.00, 97.24, -56.00, 107.56, -60.00, 110.14, -74.00, 117.36, -84.00, 128.64, -92.00, 141.76, -94.00, 154.88, -92.00, 165.82, -84.00, 172.36, -72.00, 173.82, -60.00, 170.94, -46.00, 164.54, -34.00, 156.48, -24.00, 147.76, -14.00, 138.84, -4.00, 129.92, 6.00, 121.00, 16.00, 112.10, 26.00, 103.16, 36.00, 94.24, 46.00, 88.30, 56.00, 89.86, 68.00, 103.18, 68]
 ]
 
+let colourPallete = ["#ff0000","#ff8700","#ffd300","#deff0a","#a1ff0a","#0aff99","#0aefff","#147df5","#580aff","#be0aff"]
+
 class ball{
   constructor(){
     this.pos = createVector(mouseX, mouseY)
-    this.rad = 75
+    this.rad = 85
     this.vel = createVector()
     this.prevPos = createVector()
   }
@@ -44,11 +46,12 @@ class smartPoint{
     this.vel = createVector(0, 0)
     this.desiredVel = createVector(0, 0)
     this.steering = 0.1
-    this.speedLimit = 85
+    this.speedLimit = 100
     this.easingValue = -0.55 // between -1 and -0.46
+    this.col = color(100)
   }
   
-  static process(groups, xOff, yOff, gId, b, timeAngles){    
+  static process(groups, xOff, yOff, gId, b, timeAngles, hitCol){    
     let slowThreshold = 5;
     
     for (let ps of groups){
@@ -74,14 +77,15 @@ class smartPoint{
         let m = p5.Vector.mag(vBet)
         if (m < b.rad + strokeRad/2){  // In collision
           c.pos.add(p5.Vector.sub(p5.Vector.setMag(vBet, b.rad + strokeRad/2), vBet))
-          c.vel = p5.Vector.mult(b.vel, 1.2)
-          let velVariance = p5.Vector.fromAngle(random(TAU), 10)
+          c.vel = p5.Vector.mult(b.vel, 1.5)
+          let velVariance = p5.Vector.fromAngle(random(TAU), 20)
           c.vel.add(velVariance)
+          c.col = hitCol
         }
         
         
         // display Line when stationary and point when moving
-        // strokeWeight(strokeRad)
+        stroke(c.col)
         
         let threshold = 4;
         let d = 0;  // distance of next point in line
@@ -119,7 +123,7 @@ let clockRadius = 0;
 let hourRadius = 0;
 let minuteRadius = 0;
 let secondRadius = 0;
-let strokeRad = 5;
+let strokeRad = 4;
 
 let font;
 let clockFontSize = 125;
@@ -137,6 +141,10 @@ let globalPoints = []
 
 let wreckingBall;
 
+let firstClick = true;
+let pointCol;
+let colIDX = 0;
+
 function preload() {
   font = loadFont("Roboto-Regular.ttf");
 }
@@ -147,7 +155,7 @@ function setup() {
   rectMode(CENTER);
   
   clockRadius = width/2 - strokeRad
-  secondRadius = clockRadius - strokeRad
+  secondRadius = clockRadius - strokeRad * 2
   hourRadius = clockRadius * 0.6
   minuteRadius = clockRadius * 0.9
   
@@ -164,18 +172,35 @@ function setup() {
   let ha = (hour() / 12) * TAU - PI/2
   let ma = (minute() / 60) * TAU - PI/2
   let sa = (second() / 60) * TAU - PI/2
-  let hourRaw = lineToPoints(0, 0, hourRadius * cos(ha), hourRadius * sin(ha), 5)
-  let minuteRaw = lineToPoints(0, 0, minuteRadius * cos(ma), minuteRadius * sin(ma), 5)
-  let secondRaw = lineToPoints(0, 0, secondRadius * cos(sa), secondRadius * sin(sa), 5)
-  hourGroup = generateDotPath(hourRaw, 30)
-  minuteGroup = generateDotPath(minuteRaw, 30)
-  secondGroup = generateDotPath(secondRaw, 30)
+  let hourRaw = [lineToPoints(0, 0, hourRadius * cos(ha), hourRadius * sin(ha), 5)]
+  let minuteRaw = [lineToPoints(0, 0, minuteRadius * cos(ma), minuteRadius * sin(ma), 5)]
+  let secondRaw = [lineToPoints(0, 0, secondRadius * cos(sa), secondRadius * sin(sa), 5)]
+  hourGroup = generateDotPath(hourRaw, clockN/4)
+  minuteGroup = generateDotPath(minuteRaw, clockN/4)
+  secondGroup = generateDotPath(secondRaw, clockN/4)
+  
+  
+  let notchesRaw = []
+  // Generate notches
+  for (let i = -PI/2; i < TAU * 0.74; i += TAU/12){
+    let temp = lineToPoints(
+      (clockRadius * 0.9) * cos(i), 
+      (clockRadius * 0.9) * sin(i), 
+      clockRadius * cos(i), 
+      clockRadius * sin(i),
+      2
+    )
+    notchesRaw.push(temp)
+  }
+  let notchGroup = generateDotPath(notchesRaw, 4)
+  
   
   let g = [310, 20, 0, 300, -315, 20, -80, -265].map(function(n){
     return (n/850) * width
   })
   
   globalPoints = [
+    {groups: notchGroup, xOff: 0, yOff: 0, sr: strokeRad, id:0},
     {groups: clock3Groups, xOff: g[0], yOff: g[1], sr: strokeRad, id:1},
     {groups: clock6Groups, xOff: g[2], yOff: g[3], sr: strokeRad, id:2},
     {groups: clock9Groups, xOff: g[4], yOff: g[5], sr: strokeRad, id:3},
@@ -185,6 +210,8 @@ function setup() {
     {groups: minuteGroup, xOff: 0, yOff: 0, sr: strokeRad*2, id:7},
     {groups: secondGroup, xOff: 0, yOff: 0, sr: strokeRad, id:8}
   ]
+  
+  pointColour = random(colourPallete)
   
   // vectorToPoints(font.textToPoints('9', ps[2], ps[3], clockFontSize, { sampleFactor:  0.15 }))
   // noLoop()
@@ -202,36 +229,27 @@ function vectorToPoints(ps){
 }
 
 function draw() { 
-  background(0, 0, 90, 0.5);
+  background(0, 0, 10, 0.2);
   translate(width/2, height/2)
   
-  let hourAngle = (hour() / 12) * TAU - PI/2
-  let minuteAngle = (minute() / 60) * TAU - PI/2
-  let secondAngle = (second() / 60) * TAU - PI/2
-  // strokeWeight(5)
-  // stroke(0, 70, 100)
-  // line(0, 0, secondRadius * cos(secondAngle), secondRadius * sin(secondAngle))
-  // strokeWeight(10)
-  // stroke(0, 70, 100)
-  // line(0, 0, minuteRadius * cos(minuteAngle), minuteRadius * sin(minuteAngle))
-  // stroke(0, 70, 100)
-  // line(0, 0, hourRadius * cos(hourAngle), hourRadius * sin(hourAngle))
-  
-  stroke(220, 70, 70)
-  noFill()
-  // strokeWeight(strokeRad)
-  // circle(0, 0, clockRadius * 2) 
+  hourAngle = (hour() / 12) * TAU - PI/2
+  minuteAngle = (minute() / 60) * TAU - PI/2
+  secondAngle = (second() / 60) * TAU - PI/2
   
   if (mouseIsPressed){
+    pointCol = colourPallete[colIDX]
+    // firstClick = false
     wreckingBall.process()
   }else{
+    // firstClick = true;
     wreckingBall.pos = createVector(-windowWidth, -windowHeight)
   }
   for (let g of globalPoints){
     strokeWeight(g.sr)
-    smartPoint.process(g.groups, g.xOff, g.yOff, g.id, wreckingBall, [hourAngle, minuteAngle, secondAngle])
+    smartPoint.process(g.groups, g.xOff, g.yOff, g.id, wreckingBall, [hourAngle, minuteAngle, secondAngle], pointCol)
   }
   
+  colIDX = (colIDX + 1) % colourPallete.length;
   
   // strokeWeight(2)
   // stroke(0)
@@ -265,10 +283,10 @@ function lineToPoints(x1, y1, x2, y2, n){
   let vBet = createVector(x2-x1, y2-y1)
   for (let i = 0; i <= 1; i+=1/n){
     let mid = p5.Vector.mult(vBet, i)
-    final.push(mid.x)
-    final.push(mid.y)
+    final.push(mid.x + x1)
+    final.push(mid.y + y1)
   }
-  return [final]
+  return final
 }
 
 function drawShape(x, y, ps){
@@ -311,6 +329,7 @@ function generateDotPath(rawShapes, n){
   let groups = []
   
   for (let rawShape of rawShapes){
+    console.log(rawShape)
     // convert raw points into createVector's
     for (let i = 0; i < rawShape.length; i+=2){
       vecShape.push(createVector(rawShape[i], rawShape[i+1]))
