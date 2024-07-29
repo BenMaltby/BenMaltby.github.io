@@ -20,7 +20,7 @@ let colourPallete = ["#ff0000","#ff8700","#ffd300","#deff0a","#a1ff0a","#0aff99"
 class ball{
   constructor(){
     this.pos = createVector(mouseX, mouseY)
-    this.rad = 85
+    this.rad = 110
     this.vel = createVector()
     this.prevPos = createVector()
   }
@@ -156,7 +156,7 @@ function setup() {
   colorMode(HSB)
   rectMode(CENTER);
   
-  clockRadius = width/2 - strokeRad
+  clockRadius = constrain(width/2 - strokeRad, 0, 450)
   secondRadius = clockRadius - strokeRad * 2
   hourRadius = clockRadius * 0.6
   minuteRadius = clockRadius * 0.9
@@ -198,7 +198,7 @@ function setup() {
   
   
   let g = [310, 20, 0, 300, -315, 20, -80, -265].map(function(n){
-    return (n/850) * width
+    return (n/850) * constrain(width, 0, 900)
   })
   
   globalPoints = [
