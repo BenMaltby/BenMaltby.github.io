@@ -46,7 +46,7 @@ class smartPoint{
     this.vel = createVector(0, 0)
     this.desiredVel = createVector(0, 0)
     this.steering = 0.1
-    this.speedLimit = 100
+    this.speedLimit = 120
     this.easingValue = -0.55 // between -1 and -0.46
     this.col = color(100)
   }
@@ -80,6 +80,7 @@ class smartPoint{
           c.vel = p5.Vector.mult(b.vel, 1.5)
           let velVariance = p5.Vector.fromAngle(random(TAU), 20)
           c.vel.add(velVariance)
+          
           c.col = hitCol
         }
         
@@ -144,6 +145,7 @@ let wreckingBall;
 let firstClick = true;
 let pointCol;
 let colIDX = 0;
+let genColHue = 0;
 
 function preload() {
   font = loadFont("Roboto-Regular.ttf");
@@ -237,7 +239,8 @@ function draw() {
   secondAngle = (second() / 60) * TAU - PI/2
   
   if (mouseIsPressed){
-    pointCol = colourPallete[colIDX]
+    // pointCol = colourPallete[floor(colIDX)]
+    pointCol = color(genColHue, 80, 100)
     // firstClick = false
     wreckingBall.process()
   }else{
@@ -249,7 +252,8 @@ function draw() {
     smartPoint.process(g.groups, g.xOff, g.yOff, g.id, wreckingBall, [hourAngle, minuteAngle, secondAngle], pointCol)
   }
   
-  colIDX = (colIDX + 1) % colourPallete.length;
+  colIDX = (colIDX + 0.1) % colourPallete.length;
+  genColHue = (genColHue + 14) % 360
   
   // strokeWeight(2)
   // stroke(0)
@@ -329,7 +333,6 @@ function generateDotPath(rawShapes, n){
   let groups = []
   
   for (let rawShape of rawShapes){
-    console.log(rawShape)
     // convert raw points into createVector's
     for (let i = 0; i < rawShape.length; i+=2){
       vecShape.push(createVector(rawShape[i], rawShape[i+1]))
