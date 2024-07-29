@@ -208,8 +208,8 @@ function setup() {
     {groups: clock9Groups, xOff: g[4], yOff: g[5], sr: strokeRad, id:3},
     {groups: clock12Groups, xOff: g[6], yOff: g[7], sr: strokeRad, id:4},
     {groups: circleGroup, xOff: 0, yOff: 0, sr: strokeRad*5, id:5},
-    {groups: hourGroup, xOff: 0, yOff: 0, sr: strokeRad*2, id:6},
     {groups: minuteGroup, xOff: 0, yOff: 0, sr: strokeRad*2, id:7},
+    {groups: hourGroup, xOff: 0, yOff: 0, sr: strokeRad*5, id:6},
     {groups: secondGroup, xOff: 0, yOff: 0, sr: strokeRad, id:8}
   ]
   
