@@ -75,7 +75,7 @@ canvas{
 }
 
 @media only screen 
-  and (max-width: 750px){
+  and (max-width: 800px){
 	.game-tile{
 		width: 90vw
 	}
