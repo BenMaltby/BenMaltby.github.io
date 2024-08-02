@@ -2,7 +2,7 @@ let points = [];
 let r = 100;
 
 function setup(){
-	createCanvas(windowWidth, windowHeight)
+	createCanvas(windowWidth + 10, windowHeight)
 	colorMode(HSB)
 	
 	for (let i = 0; i < 20; i++){
@@ -15,7 +15,7 @@ function setup(){
 }
 
 function draw(){
-	background(10)
+	background(0, 0, 10, 0.1)
 
 	for (let p of points){
 

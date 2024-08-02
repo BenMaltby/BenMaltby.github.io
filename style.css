@@ -1,16 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Montserrat&family=Poppins:ital,wght@0,200&family=Raleway:wght@700&display=swap');
 
 html, body {
-	margin: 0;
-	padding: 0;
-	/* background-color: #333333; */
+  margin: 0;
+  padding: 0;
+  /* background-color: #333333; */
 }
 
 canvas{
 	position: fixed;
-	left: 0;
-	top: 0;
-	z-index: -1; 
+    left: 0;
+    top: 0;
+    z-index: -1; 
 }
 
 .tile-column {
@@ -30,7 +30,7 @@ canvas{
 	justify-content: space-evenly;
 	background-color: #222222;
 	box-shadow: 10px 10px #101010;
-	width: 90vw;
+	width: 60vw;
 	height: 500px;
 	text-align: center;
 	font-family: Poppins, sans-serif;
@@ -40,6 +40,7 @@ canvas{
 
 #game-title {
 	/* border: 3px solid red; */
+	font-family: Raleway, sans-serif;
 	margin: 0px;
 	padding: 0px;
 	font-size: 70px;
@@ -48,13 +49,15 @@ canvas{
 
 #game-desc {
 	/* border: 3px solid red; */
+	font-family: Poppins, sans-serif;
+	font-style: italic;
 	font-size: 40px;
 	padding: 0px;
 	margin: 0px 60px;
 }
 
 #play-button {
-	/* border: 3px solid green; */
+	border: 2px solid rgb(255, 64, 64);
 	background-color: rgb(255, 64, 64);
 	text-align: center;
 	text-decoration: none;
@@ -63,4 +66,17 @@ canvas{
 	margin: 0px 60px;
 	border-radius: 10px;
 	color: white;
+}
+
+#play-button:hover {
+	background-color: #ffffff00;
+	border: 2px solid red;
+	color: rgb(255, 64, 64);
+}
+
+@media only screen 
+  and (max-width: 750px){
+	.game-tile{
+		width: 90vw
+	}
 }
