@@ -24,7 +24,7 @@ class smartBall{
 	  this.vel.setMag(constrain(p5.Vector.mag(this.vel), this.minSpeed, this.maxSpeed))
 	  this.pos.add(this.vel)
 	  
-	  if (this.pos.y + this.radius < height/2 && !this.canCollide) {
+	  if (this.pos.y + this.radius < ballZoneLine && !this.canCollide) {
 		this.canCollide = true
 	  }
 	  
@@ -45,9 +45,9 @@ class smartBall{
 		this.pos.x -= this.pos.x + this.radius - width
 		return;
 	  }
-	  if (this.pos.y + this.radius >= height/2){
+	  if (this.pos.y + this.radius >= ballZoneLine){
 		this.vel.y *= -1
-		this.pos.y -= this.pos.y + this.radius - height/2
+		this.pos.y -= this.pos.y + this.radius - ballZoneLine
 	  }
 	}
 	
@@ -63,6 +63,7 @@ class smartBall{
   let targetAng = 4;
   let theta = 0;
   let balls = []
+  let ballLimit = 5;
   let firstShot = true
   let shotQueued = false;
   let mouseLifted = false;
@@ -72,13 +73,16 @@ class smartBall{
   let cannonWidth = 50;
   let baseWidth = 160;
   let baseHeight = 70;
+  let ballZoneLine;
   
   let pSystem;
   
   function setup() {
-	createCanvas(windowWidth, windowHeight);
+	createCanvas(windowWidth + 5, windowHeight);
 	colorMode(HSB)
 	rectMode(CENTER)
+
+	ballZoneLine = height * 0.75
 	
 	// cannon particle system
 	pSystem = new particleSystem()
@@ -96,7 +100,7 @@ class smartBall{
 	// drawAxis()
 	
 	if (mouseIsPressed){
-	  let cMouseY = constrain(mouseY, 0, height/2 - baseHeight)
+	  let cMouseY = constrain(mouseY, 0, ballZoneLine - baseHeight)
 	  shotPos = createVector(mouseX, cMouseY)
 	  targetAng = atan2(cMouseY - height + 70, mouseX - width/2) + TAU
 	  shotQueued = true;
@@ -106,7 +110,7 @@ class smartBall{
 	else{
 	  if (mouseLifted){  // on mouse lift
 		let force = p5.Vector.dist(shotPos, cannonPos)/5
-		balls.push(new smartBall(rawAng, 100))
+		if (balls.length < ballLimit){balls.push(new smartBall(rawAng, 100))}
 		pSystem.addExplosion(cannonPos.x, cannonPos.y, targetAng)
 		shotQueued = false
 		mouseLifted = false;
