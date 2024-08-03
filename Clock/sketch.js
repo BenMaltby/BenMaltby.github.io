@@ -151,7 +151,7 @@ let genColHue = 0;
 // }
 
 function setup() { 
-  createCanvas(windowWidth+5, windowHeight);
+  createCanvas(windowWidth + 5, windowHeight);
   colorMode(HSB)
   rectMode(CENTER);
   pixelDensity(1)

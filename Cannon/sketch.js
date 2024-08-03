@@ -216,6 +216,18 @@ function destroyParticles(ls, dl){
 	dl = []
 }
 
+function touchStarted(){
+	return false;
+}
+
+function touchMoved(){
+	return false;
+}
+
+function touchEnded(){
+	return false;
+}
+
 function shotGuide(){
 	cannonPos = createVector(
 		width/2 + cannonLength * cos(rawAng), 
