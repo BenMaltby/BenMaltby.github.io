@@ -1,13 +1,17 @@
 class smartBall{
-	constructor(theta, startSpeed){
-	  this.pos = createVector(
-		width/2 + cannonLength * cos(theta), 
-		height-baseHeight + cannonLength * sin(theta)
-	  )
+	constructor(theta, startSpeed, isInBox=false){
+	  this.isInBox = isInBox	
+	  this.pos = createVector(random(100, width-100), random(100, ballZoneLine-100))
+	  if (!this.isInBox){
+		this.pos = createVector(
+			width/2 + cannonLength * cos(theta), 
+			height-baseHeight + cannonLength * sin(theta)
+		)
+	  }
 	  this.vel = p5.Vector.fromAngle(theta, startSpeed)
 	  this.acc = createVector()
 	  this.maxSpeed = 100;
-	  this.minSpeed = 5;
+	  this.minSpeed = 10;
 	  this.col = color(random(360), 70, 100)
 	  this.radius = 20;
 	  this.canCollide = false;
@@ -28,26 +32,28 @@ class smartBall{
 		this.canCollide = true
 	  }
 	  
-	  if (!this.canCollide){return}
-	  
-	  if (this.pos.y - this.radius <= 0){
-		this.vel.y *= -1
-		this.pos.y -= this.pos.y - this.radius
-		return;
-	  }
-	  if (this.pos.x - this.radius <= 0){
-		this.vel.x *= -1
-		this.pos.x -= this.pos.x - this.radius
-		return;
-	  }
-	  if (this.pos.x + this.radius >= width){
-		this.vel.x *= -1
-		this.pos.x -= this.pos.x + this.radius - width
-		return;
-	  }
-	  if (this.pos.y + this.radius >= ballZoneLine){
-		this.vel.y *= -1
-		this.pos.y -= this.pos.y + this.radius - ballZoneLine
+	  if (this.isInBox){
+		if (!this.canCollide){return}
+		
+		if (this.pos.y - this.radius <= 0){
+			this.vel.y *= -1
+			this.pos.y -= this.pos.y - this.radius
+			return;
+		}
+		if (this.pos.x - this.radius <= 0){
+			this.vel.x *= -1
+			this.pos.x -= this.pos.x - this.radius
+			return;
+		}
+		if (this.pos.x + this.radius >= width){
+			this.vel.x *= -1
+			this.pos.x -= this.pos.x + this.radius - width
+			return;
+		}
+		if (this.pos.y + this.radius >= ballZoneLine){
+			this.vel.y *= -1
+			this.pos.y -= this.pos.y + this.radius - ballZoneLine
+		}
 	  }
 	}
 	
@@ -57,100 +63,130 @@ class smartBall{
 	  stroke(this.col)
 	  point(this.pos.x, this.pos.y)
 	}
-  }
-  
-  let rawAng = 4;
-  let targetAng = 4;
-  let theta = 0;
-  let balls = []
-  let ballLimit = 5;
-  let firstShot = true
-  let shotQueued = false;
-  let mouseLifted = false;
-  let shotPos;
-  
-  let cannonLength = 200;
-  let cannonWidth = 50;
-  let baseWidth = 160;
-  let baseHeight = 70;
-  let ballZoneLine;
-  
-  let pSystem;
-  
-  function setup() {
+}
+
+let rawAng = 4;
+let targetAng = 4;
+let theta = 0;
+let balls = []
+let ballLimit = 5;
+let cannonBalls = []
+
+let firstShot = true
+let shotQueued = false;
+let mouseLifted = false;
+let shotPos;
+
+let cannonLength = 200;
+let cannonWidth = 50;
+let baseWidth = 160;
+let baseHeight = 70;
+let ballZoneLine;
+
+let pSystem;
+
+function setup() {
 	createCanvas(windowWidth + 5, windowHeight);
 	colorMode(HSB)
 	rectMode(CENTER)
 
 	ballZoneLine = height * 0.75
-	
+
 	// cannon particle system
 	pSystem = new particleSystem()
-  }
-  
-  function draw() {
-	background(0, 0, 10, 1);
-	
-	for (let b of balls){
-	  b.update()
-	  b.show()
+
+	for (let i = 0; i < ballLimit; i++){
+		balls.push(new smartBall(random(TAU), random(3, 6), true))
 	}
-	
+}
+
+function draw() {
+	background(0, 0, 10, 1);
+
+	for (let b of balls){
+		b.update()
+		b.show()
+	}
+
+	for (let c of cannonBalls){
+		c.update()
+
+		for (let b of balls){
+
+			let vBet = p5.Vector.sub(b.pos, c.pos)
+			if (vBet.mag() <= b.radius + c.radius){  // in collision
+
+				let normBetween = p5.Vector.normalize(vBet);
+				normBetween.mult(-1);
+				let dotProduct = p5.Vector.dot(c.vel, normBetween);
+				let normalDot = p5.Vector.mult(normBetween, 2*dotProduct)
+				// normBetween.mult(2*dotProduct);
+				c.vel = p5.Vector.sub(c.vel, normalDot)
+				
+				vBet.setMag(b.radius/2+this.radius/2-vBet.mag())
+				vBet.mult(-1)
+				c.pos.add(vBet)
+			}
+		}
+
+		c.show()
+	}
+
 	drawCannon(rawAng)
 	// drawAxis()
-	
+
 	if (mouseIsPressed){
-	  let cMouseY = constrain(mouseY, 0, ballZoneLine - baseHeight)
-	  shotPos = createVector(mouseX, cMouseY)
-	  targetAng = atan2(cMouseY - height + 70, mouseX - width/2) + TAU
-	  shotQueued = true;
-	  
-	  mouseLifted = true;
+		let cMouseY = constrain(mouseY, 0, ballZoneLine - baseHeight)
+		shotPos = createVector(mouseX, cMouseY)
+		targetAng = atan2(cMouseY - height + 70, mouseX - width/2) + TAU
+		shotQueued = true;
+		
+		mouseLifted = true;
 	}
 	else{
-	  if (mouseLifted){  // on mouse lift
-		let force = p5.Vector.dist(shotPos, cannonPos)/5
-		if (balls.length < ballLimit){balls.push(new smartBall(rawAng, 100))}
-		pSystem.addExplosion(cannonPos.x, cannonPos.y, targetAng)
-		shotQueued = false
-		mouseLifted = false;
-	  }
+		if (mouseLifted){  // on mouse lift
+			let force = p5.Vector.dist(shotPos, cannonPos)/5
+			cannonBalls.push(new smartBall(rawAng, 10))
+			pSystem.addExplosion(cannonPos.x, cannonPos.y, targetAng)
+			shotQueued = false
+			mouseLifted = false;
+		}
 	}
-	
+
 	if (shotQueued){
-	  shotGuide()
+		shotGuide()
 	}
-	
+
 	let diff = targetAng - rawAng
 	if (abs(diff) < 0.01){
-	  rawAng = targetAng
+		rawAng = targetAng
 	}else{
-	  firstShot = true;
-	  rawAng += diff / 6
+		firstShot = true;
+		rawAng += diff / 6
 	}
-	
+
 	pSystem.process()
-  }
-  
-  function shotGuide(){
+}
+
+function shotGuide(){
 	cannonPos = createVector(
 		width/2 + cannonLength * cos(rawAng), 
 		height - baseHeight + cannonLength * sin(rawAng))
 	stroke(0, 70, 100)
 	strokeWeight(3)
 	line(cannonPos.x, cannonPos.y, shotPos.x, shotPos.y)
-	
+
 	strokeWeight(10)
 	line(shotPos.x, shotPos.y,
 		shotPos.x + 20 * cos(targetAng - PI * 0.75),
 		shotPos.y + 20 * sin(targetAng - PI * 0.75))
-	
+
 	line(shotPos.x, shotPos.y,
 		shotPos.x + 20 * cos(targetAng + PI * 0.75),
 		shotPos.y + 20 * sin(targetAng + PI * 0.75))
-  }
-  
-  function drawCannon(theta){  
+}
+
+function drawCannon(theta){  
 	push()
 	rectMode(CORNER)
 	noStroke()
@@ -162,15 +198,15 @@ class smartBall{
 	strokeWeight(cannonWidth)
 	point(0, 0)
 	pop()
-  
+
 	fill(50)
 	noStroke()
 	rect(width/2, height, baseWidth, baseHeight*2, 20, 20)
-  }
-  
-  function drawAxis(){
+}
+
+function drawAxis(){
 	stroke(0)
 	strokeWeight(2)
 	line(width/2, 0, width/2, height)
 	line(0, height/2, width, height/2)
-  }
+}
