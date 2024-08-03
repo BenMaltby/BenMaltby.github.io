@@ -2,18 +2,20 @@ class smartBall{
 	constructor(theta, startSpeed, isInBox=false){
 	  this.isInBox = isInBox	
 	  this.pos = createVector(random(100, width-100), random(100, ballZoneLine-100))
+      this.col = color(random(360), 70, 100)
+	  this.radius = 20;
 	  if (!this.isInBox){
 		this.pos = createVector(
 			width/2 + cannonLength * cos(theta), 
 			height-baseHeight + cannonLength * sin(theta)
 		)
+        this.col = color(90)
+        this.radius = 20
 	  }
 	  this.vel = p5.Vector.fromAngle(theta, startSpeed)
 	  this.acc = createVector()
 	  this.maxSpeed = 100;
-	  this.minSpeed = 10;
-	  this.col = color(random(360), 70, 100)
-	  this.radius = 20;
+	  this.minSpeed = 5;
 	  this.canCollide = false;
 	}
 	
@@ -84,6 +86,8 @@ let baseHeight = 70;
 let ballZoneLine;
 
 let pSystem;
+let cannonParticles;
+let ballParticles;
 
 function setup() {
 	createCanvas(windowWidth + 5, windowHeight);
@@ -91,6 +95,26 @@ function setup() {
 	rectMode(CENTER)
 
 	ballZoneLine = height * 0.75
+  
+    cannonParticles = {
+      nParts: 30,
+      shotSpeed: [2, 50],
+      radius: [5,15],
+      shotDir: 0,
+      angleRange: [-PI/20, PI/20],
+      gravity: 0.1,
+      life: 40
+    }
+  
+    ballParticles = {
+      nParts: 30,
+      shotSpeed: [5, 10],
+      radius: [5,15],
+      shotDir: 0,
+      angleRange: [0, TAU],
+      gravity: 0.1,
+      life: 40
+    }
 
 	// cannon particle system
 	pSystem = new particleSystem()
@@ -114,18 +138,27 @@ function draw() {
 		for (let b of balls){
 
 			let vBet = p5.Vector.sub(b.pos, c.pos)
-			if (vBet.mag() <= b.radius + c.radius){  // in collision
+			if (vBet.mag() < b.radius + c.radius){  // in collision
 
 				let normBetween = p5.Vector.normalize(vBet);
 				normBetween.mult(-1);
 				let dotProduct = p5.Vector.dot(c.vel, normBetween);
 				let normalDot = p5.Vector.mult(normBetween, 2*dotProduct)
-				// normBetween.mult(2*dotProduct);
+                
+                ballParticles.shotDir = atan2(c.vel.y, c.vel.x)
+                pSystem.addExplosion(
+                  b.pos.x+normBetween.x, 
+                  b.pos.y+normBetween.y, 
+                  ballParticles)                
+                
 				c.vel = p5.Vector.sub(c.vel, normalDot)
+                b.vel = p5.Vector.sub(b.vel, p5.Vector.mult(normalDot, -1))
 				
-				vBet.setMag(b.radius/2+this.radius/2-vBet.mag())
+				vBet.setMag(b.radius+c.radius-vBet.mag())
+                b.pos.add(vBet)
 				vBet.mult(-1)
 				c.pos.add(vBet)
+              
 			}
 		}
 
@@ -146,8 +179,10 @@ function draw() {
 	else{
 		if (mouseLifted){  // on mouse lift
 			let force = p5.Vector.dist(shotPos, cannonPos)/5
-			cannonBalls.push(new smartBall(rawAng, 10))
-			pSystem.addExplosion(cannonPos.x, cannonPos.y, targetAng)
+			cannonBalls.push(new smartBall(rawAng, 75))
+          
+            cannonParticles.shotDir = targetAng
+			pSystem.addExplosion(cannonPos.x, cannonPos.y, cannonParticles)
 			shotQueued = false
 			mouseLifted = false;
 		}
