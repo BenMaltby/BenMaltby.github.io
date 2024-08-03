@@ -73,6 +73,7 @@ let theta = 0;
 let balls = []
 let ballLimit = 5;
 let cannonBalls = []
+let cannonsToDelete = []
 
 let firstShot = true
 let shotQueued = false;
@@ -132,8 +133,13 @@ function draw() {
 		b.show()
 	}
 
-	for (let c of cannonBalls){
+	for (let i = 0; i < cannonBalls.length; i++){
+		let c = cannonBalls[i]
 		c.update()
+
+		if (c.pos.x<-100||c.pos.x>width+100||c.pos.y<-100||c.pos.y>height+100){
+			cannonsToDelete.push(i)
+		}
 
 		for (let b of balls){
 
@@ -201,6 +207,13 @@ function draw() {
 	}
 
 	pSystem.process()
+}
+
+function destroyParticles(ls, dl){
+	for (let d of dl){
+		ls.splice(d,1)
+	}
+	dl = []
 }
 
 function shotGuide(){
