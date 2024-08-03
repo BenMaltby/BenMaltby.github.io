@@ -71,7 +71,7 @@ let rawAng = 4;
 let targetAng = 4;
 let theta = 0;
 let balls = []
-let ballLimit = 5;
+let ballLimit = 10;
 let cannonBalls = []
 let cannonsToDelete = []
 
@@ -109,12 +109,12 @@ function setup() {
   
     ballParticles = {
       nParts: 30,
-      shotSpeed: [5, 10],
-      radius: [5,15],
+      shotSpeed: [10, 15],
+      radius: [15,25],
       shotDir: 0,
       angleRange: [0, TAU],
       gravity: 0.1,
-      life: 40
+      life: 60
     }
 
 	// cannon particle system
@@ -185,7 +185,7 @@ function draw() {
 	else{
 		if (mouseLifted){  // on mouse lift
 			let force = p5.Vector.dist(shotPos, cannonPos)/5
-			cannonBalls.push(new smartBall(rawAng, 75))
+			cannonBalls.push(new smartBall(rawAng, 100))
           
             cannonParticles.shotDir = targetAng
 			pSystem.addExplosion(cannonPos.x, cannonPos.y, cannonParticles)
