@@ -20,6 +20,7 @@ canvas{
 }
 
 .tile-column {
+	/* border: 3px solid red; */
 	margin-top: 100px;
 	margin-bottom: 100px;
 	display: flex;
@@ -78,6 +79,30 @@ canvas{
 	background-color: #ffffff00;
 	border: 2px solid red;
 	color: rgb(255, 64, 64);
+}
+
+.footer {
+	/* border: 3px solid green; */
+	border-top: 10px solid #101010;
+	background-color: #222222;
+	width: 100%;
+	height: 100px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+}
+
+#follow-text {
+	font-family: Poppins, sans-serif;
+	font-size: 30px;
+	color: white;
+}
+
+#follow-text a{
+	text-decoration: none;
+	font-family: Raleway, sans-serif;
+	color: red;
 }
 
 @media only screen 
