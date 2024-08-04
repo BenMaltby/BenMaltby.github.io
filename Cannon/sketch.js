@@ -10,7 +10,7 @@ class smartBall{
 			height-baseHeight + cannonLength * sin(theta)
 		)
         this.col = color(90)
-        this.radius = 20
+        this.radius = 50
 	  }
 	  this.vel = p5.Vector.fromAngle(theta, startSpeed)
 	  this.acc = createVector()
@@ -60,10 +60,14 @@ class smartBall{
 	}
 	
 	show(){
-	  strokeWeight(this.radius*2)
-	  // this.col.setAlpha(0.6)
-	  stroke(this.col)
-	  point(this.pos.x, this.pos.y)
+		strokeWeight(this.radius*2)
+		// this.col.setAlpha(0.6)
+		stroke(this.col)
+		point(this.pos.x, this.pos.y)
+
+		strokeWeight(this.radius*1.5)
+		stroke(10)
+		point(this.pos.x, this.pos.y)
 	}
 }
 
@@ -108,13 +112,13 @@ function setup() {
     }
   
     ballParticles = {
-      nParts: 30,
-      shotSpeed: [10, 25],
-      radius: [15,25],
+      nParts: 50,
+      shotSpeed: [5, 25],
+      radius: [15,30],
       shotDir: 0,
       angleRange: [0, TAU],
-      gravity: 0.5,
-      life: 60
+      gravity: 0.1,
+      life: 80
     }
 
 	// cannon particle system

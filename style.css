@@ -30,12 +30,12 @@ canvas{
 }
 
 .game-tile {
-	/* border: 3px solid red; */
+	border: 1px solid white;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-evenly;
 	background-color: #222222;
-	box-shadow: 10px 10px #101010;
+	box-shadow: 20px 20px #101010;
 	width: 60vw;
 	height: 500px;
 	text-align: center;
