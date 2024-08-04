@@ -3,7 +3,7 @@ class smartBall{
 	  this.isInBox = isInBox	
 	  this.pos = createVector(random(100, width-100), random(100, ballZoneLine-100))
       this.col = color(random(360), 70, 100)
-	  this.radius = 20;
+	  this.radius = 30;
 	  if (!this.isInBox){
 		this.pos = createVector(
 			width/2 + cannonLength * cos(theta), 
@@ -109,11 +109,11 @@ function setup() {
   
     ballParticles = {
       nParts: 30,
-      shotSpeed: [10, 15],
+      shotSpeed: [10, 25],
       radius: [15,25],
       shotDir: 0,
       angleRange: [0, TAU],
-      gravity: 0.1,
+      gravity: 0.5,
       life: 60
     }
 
