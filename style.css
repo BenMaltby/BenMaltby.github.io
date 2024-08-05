@@ -36,7 +36,7 @@ canvas{
 	flex-direction: column;
 	justify-content: space-evenly;
 	background-color: #222222;
-	box-shadow: 20px 20px #101010;
+	box-shadow: 20px 20px #101010cc;
 	width: 60vw;
 	height: 500px;
 	text-align: center;
