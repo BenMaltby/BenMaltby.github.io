@@ -55,7 +55,7 @@ function setup() {
 	for (let i = 0; i < ballLimit; i++){
 		let ballStartPos = createVector(random(100, width-100), random(100, ballZoneLine-100))
       	let ballRandomColour = color(random(360), 70, 100)
-		balls.push(new smartBall(ballStartPos, random(TAU), 5, ballRandomColour, 50, true))
+		balls.push(new smartBall(ballStartPos, random(TAU), 5, ballRandomColour, 30, true))
 	}
 }
 
