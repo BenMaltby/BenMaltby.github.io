@@ -55,7 +55,7 @@ function setup() {
 	for (let i = 0; i < ballLimit; i++){
 		let ballStartPos = createVector(random(100, width-100), random(100, ballZoneLine-100))
       	let ballRandomColour = color(random(360), 70, 100)
-		balls.push(new smartBall(ballStartPos, random(TAU), 5, ballRandomColour, 30, true))
+		balls.push(new smartBall(ballStartPos, random(TAU), 5, ballRandomColour, 50, true))
 	}
 }
 
@@ -79,6 +79,7 @@ function draw() {
 			if (c.pos.x<-100||c.pos.x>width+100||c.pos.y<-100||c.pos.y>height+100){
 				cannonsToDelete.push(i)
 			}
+
 
 			let vBet = p5.Vector.sub(b.pos, c.pos)
 			if (vBet.mag() < b.radius + c.radius){  // in collision
