@@ -80,6 +80,7 @@ function draw() {
 				cannonsToDelete.push(i)
 			}
 
+			
 			let vBet = p5.Vector.sub(b.pos, c.pos)
 			if (vBet.mag() < b.radius + c.radius){  // in collision
 
