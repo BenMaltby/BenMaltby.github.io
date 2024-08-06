@@ -238,16 +238,18 @@ function shotGuide(){
 		height - baseHeight + cannonLength * sin(rawAng))
 	stroke(0, 70, 100)
 	strokeWeight(3)
-	line(cannonPos.x, cannonPos.y, shotPos.x, shotPos.y)
+	let dl = p5.Vector.add(p5.Vector.setMag(p5.Vector.sub(shotPos,cannonPos), 200), cannonPos)
+	line(cannonPos.x, cannonPos.y, dl.x, dl.y)
 
+	let tempAng = atan2(dl.y-cannonPos.y, dl.x-cannonPos.x)
 	strokeWeight(10)
-	line(shotPos.x, shotPos.y,
-		shotPos.x + 20 * cos(targetAng - PI * 0.75),
-		shotPos.y + 20 * sin(targetAng - PI * 0.75))
+	line(dl.x, dl.y,
+		dl.x + 20 * cos(tempAng - PI * 0.75),
+		dl.y + 20 * sin(tempAng - PI * 0.75))
 
-	line(shotPos.x, shotPos.y,
-		shotPos.x + 20 * cos(targetAng + PI * 0.75),
-		shotPos.y + 20 * sin(targetAng + PI * 0.75))
+	line(dl.x, dl.y,
+		dl.x + 20 * cos(tempAng + PI * 0.75),
+		dl.y + 20 * sin(tempAng + PI * 0.75))
 }
 
 function drawCannon(theta){  
