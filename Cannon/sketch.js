@@ -1,76 +1,3 @@
-class smartBall{
-	constructor(theta, startSpeed, isInBox=false){
-	  this.isInBox = isInBox	
-	  this.pos = createVector(random(100, width-100), random(100, ballZoneLine-100))
-      this.col = color(random(360), 70, 100)
-	  this.radius = 30;
-	  if (!this.isInBox){
-		this.pos = createVector(
-			width/2 + cannonLength * cos(theta), 
-			height-baseHeight + cannonLength * sin(theta)
-		)
-        this.col = color(90)
-        this.radius = 50
-	  }
-	  this.vel = p5.Vector.fromAngle(theta, startSpeed)
-	  this.acc = createVector()
-	  this.maxSpeed = 100;
-	  this.minSpeed = 5;
-	  this.canCollide = false;
-	}
-	
-	update(){
-	  this.acc = p5.Vector.setMag(this.vel, -2)
-	  if (p5.Vector.mag(this.vel) - p5.Vector.mag(this.acc) > 0){
-		this.vel.add(this.acc)
-	  }
-	  else{
-		this.vel.setMag(this.minSpeed)
-	  }
-	  this.vel.setMag(constrain(p5.Vector.mag(this.vel), this.minSpeed, this.maxSpeed))
-	  this.pos.add(this.vel)
-	  
-	  if (this.pos.y + this.radius < ballZoneLine && !this.canCollide) {
-		this.canCollide = true
-	  }
-	  
-	  if (this.isInBox){
-		if (!this.canCollide){return}
-		
-		if (this.pos.y - this.radius <= 0){
-			this.vel.y *= -1
-			this.pos.y -= this.pos.y - this.radius
-			return;
-		}
-		if (this.pos.x - this.radius <= 0){
-			this.vel.x *= -1
-			this.pos.x -= this.pos.x - this.radius
-			return;
-		}
-		if (this.pos.x + this.radius >= width){
-			this.vel.x *= -1
-			this.pos.x -= this.pos.x + this.radius - width
-			return;
-		}
-		if (this.pos.y + this.radius >= ballZoneLine){
-			this.vel.y *= -1
-			this.pos.y -= this.pos.y + this.radius - ballZoneLine
-		}
-	  }
-	}
-	
-	show(){
-		strokeWeight(this.radius*2)
-		// this.col.setAlpha(0.6)
-		stroke(this.col)
-		point(this.pos.x, this.pos.y)
-
-		strokeWeight(this.radius*1.5)
-		stroke(10)
-		point(this.pos.x, this.pos.y)
-	}
-}
-
 let rawAng = 4;
 let targetAng = 4;
 let theta = 0;
@@ -84,6 +11,7 @@ let shotQueued = false;
 let mouseLifted = false;
 let shotPos;
 
+let cannonPos;
 let cannonLength = 200;
 let cannonWidth = 50;
 let baseWidth = 160;
@@ -125,27 +53,32 @@ function setup() {
 	pSystem = new particleSystem()
 
 	for (let i = 0; i < ballLimit; i++){
-		balls.push(new smartBall(random(TAU), random(3, 6), true))
+		let ballStartPos = createVector(random(100, width-100), random(100, ballZoneLine-100))
+      	let ballRandomColour = color(random(360), 70, 100)
+		balls.push(new smartBall(ballStartPos, random(TAU), 5, ballRandomColour, 30, true))
 	}
 }
 
 function draw() {
 	background(0, 0, 10, 1);
 
-	for (let b of balls){
-		b.update()
-		b.show()
+
+	for (let c of cannonBalls){
+		c.update()
+		c.show()
 	}
 
-	for (let i = 0; i < cannonBalls.length; i++){
-		let c = cannonBalls[i]
-		c.update()
+	for (let b of balls){
+		b.update()
+		b.updateInBox()
+		b.show()
 
-		if (c.pos.x<-100||c.pos.x>width+100||c.pos.y<-100||c.pos.y>height+100){
-			cannonsToDelete.push(i)
-		}
+		for (let i = 0; i < cannonBalls.length; i++){
+			let c = cannonBalls[i]
 
-		for (let b of balls){
+			if (c.pos.x<-100||c.pos.x>width+100||c.pos.y<-100||c.pos.y>height+100){
+				cannonsToDelete.push(i)
+			}
 
 			let vBet = p5.Vector.sub(b.pos, c.pos)
 			if (vBet.mag() < b.radius + c.radius){  // in collision
@@ -171,14 +104,12 @@ function draw() {
               
 			}
 		}
-
-		c.show()
 	}
 
 	drawCannon(rawAng)
 	// drawAxis()
 
-	if (mouseIsPressed){
+	if (mouseIsPressed){  // mouse is down
 		let cMouseY = constrain(mouseY, 0, ballZoneLine - baseHeight)
 		shotPos = createVector(mouseX, cMouseY)
 		targetAng = atan2(cMouseY - height + 70, mouseX - width/2) + TAU
@@ -188,8 +119,8 @@ function draw() {
 	}
 	else{
 		if (mouseLifted){  // on mouse lift
-			let force = p5.Vector.dist(shotPos, cannonPos)/5
-			cannonBalls.push(new smartBall(rawAng, 100))
+			// let force = p5.Vector.dist(shotPos, cannonPos)/5
+			cannonBalls.push(new smartBall(cannonPos, rawAng, 30, color(90), 50))
           
             cannonParticles.shotDir = targetAng
 			pSystem.addExplosion(cannonPos.x, cannonPos.y, cannonParticles)
