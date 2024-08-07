@@ -4,10 +4,9 @@ let theta = 0;
 let balls = []
 let ballLimit = 10;
 let cannonBalls = []
-let cannonsToDelete = []
+let cannonsToDelete = new Set()
 
 let firstShot = true
-let shotQueued = false;
 let mouseLifted = false;
 let shotPos;
 
@@ -22,10 +21,16 @@ let pSystem;
 let cannonParticles;
 let ballParticles;
 
+// let font;
+// function preload(){
+// 	font = loadFont("Super-Squad-Italic.ttf")
+// }
+
 function setup() {
 	createCanvas(windowWidth + 5, windowHeight);
 	colorMode(HSB)
 	rectMode(CENTER)
+	// textFont(font)
 
 	ballZoneLine = height * 0.75
   
@@ -77,12 +82,17 @@ function draw() {
 			let c = cannonBalls[i]
 
 			if (c.pos.x<-100||c.pos.x>width+100||c.pos.y<-100||c.pos.y>height+100){
-				cannonsToDelete.push(i)
+				cannonsToDelete.add(i)
 			}
 
 
 			let vBet = p5.Vector.sub(b.pos, c.pos)
 			if (vBet.mag() < b.radius + c.radius){  // in collision
+				
+				c.collisionCount ++;
+				
+				let hitScore = c.collisionCount * 50 * 1.3685
+				superText.addText(`${hitScore.toFixed(2)}`, c.pos.x, c.pos.y, c.collisionCount)
 
 				let normBetween = p5.Vector.normalize(vBet);
 				normBetween.mult(-1);
@@ -108,13 +118,15 @@ function draw() {
 	}
 
 	drawCannon(rawAng)
+	
+	destroyCannonBalls()
 	// drawAxis()
 
 	if (mouseIsPressed){  // mouse is down
 		let cMouseY = constrain(mouseY, 0, ballZoneLine - baseHeight)
 		shotPos = createVector(mouseX, cMouseY)
 		targetAng = atan2(cMouseY - height + 70, mouseX - width/2) + TAU
-		shotQueued = true;
+		shotGuide()
 		
 		mouseLifted = true;
 	}
@@ -130,10 +142,6 @@ function draw() {
 		}
 	}
 
-	if (shotQueued){
-		shotGuide()
-	}
-
 	let diff = targetAng - rawAng
 	if (abs(diff) < 0.01){
 		rawAng = targetAng
@@ -143,13 +151,8 @@ function draw() {
 	}
 
 	pSystem.process()
-}
 
-function destroyParticles(ls, dl){
-	for (let d of dl){
-		ls.splice(d,1)
-	}
-	dl = []
+	superText.processText()
 }
 
 function touchStarted(){
@@ -162,6 +165,13 @@ function touchMoved(){
 
 function touchEnded(){
 	return false;
+}
+
+function destroyCannonBalls(){
+	for (let d of cannonsToDelete){
+		cannonBalls.splice(d, 1)
+	}
+	cannonsToDelete = new Set()
 }
 
 function shotGuide(){

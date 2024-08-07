@@ -8,6 +8,7 @@ class smartBall{
 	  this.acc = createVector()
 	  this.maxSpeed = 50;
 	  this.minSpeed = 5;
+	  this.collisionCount = 0;
 	}
 
 	updateInBox(){
@@ -33,7 +34,7 @@ class smartBall{
 	}
 	
 	update(){
-		let deccelerate = (this.isInBox) ? -0.5 : -0.25
+		let deccelerate = (this.isInBox) ? -0.5 : -0.1
 		this.acc = p5.Vector.setMag(this.vel, deccelerate)
 
 		if (p5.Vector.mag(this.vel) - p5.Vector.mag(this.acc) > 0){
