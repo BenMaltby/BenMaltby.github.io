@@ -8,7 +8,7 @@ class superText{
 		this.y = y
 		this.scale = sc
 		this.offSet = p5.Vector.fromAngle(random(TAU), 5)
-		this.life = 10
+		this.life = 10 + ((this.scale - 1) * (this.scale - 1)) * 0.25
 		this.time = 0
 	}
 
