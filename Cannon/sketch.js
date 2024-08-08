@@ -175,7 +175,7 @@ function draw() {
 	noStroke()
 	fill(90)
 	let printScore = numberWithCommas(totalScore.toFixed(2))
-	text(`${printScore}`, 200, 100)
+	text(`${printScore}`, 100, 100)
 
 	text(`x${highestMult} MULTI`, width - 400, 100)
 }
