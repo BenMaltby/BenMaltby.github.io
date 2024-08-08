@@ -8,7 +8,7 @@ class superText{
 		this.y = y
 		this.scale = sc
 		this.offSet = p5.Vector.fromAngle(random(TAU), 5)
-		this.life = 10 + ((this.scale - 1) * (this.scale - 1)) * 0.25
+		this.life = constrain(10 + ((this.scale - 1) * (this.scale - 1)) * 0.25, 0, 30)
 		this.time = 0
 	}
 
@@ -16,8 +16,9 @@ class superText{
 		let fade = map(this.time, 0, this.life, 1, 0)
 		let c = color(map(this.time, 0, this.life, 0, 360), 100, 100, fade)
 		fill(c)
-		strokeWeight(2)
-		stroke(0, 0, 0, fade)
+		noStroke()
+		// strokeWeight(2)
+		// stroke(0, 0, 0, fade)
 		textSize(25 + (10 * this.scale) + sin(this.time) * 10)
 		text(this.msg, this.x + this.offSet.x, this.y + this.offSet.y)
 		this.time += 0.1

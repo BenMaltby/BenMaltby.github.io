@@ -53,8 +53,8 @@ class smartBall{
 		stroke(this.col)
 		point(this.pos.x, this.pos.y)
 
-		strokeWeight(this.radius*1.5)
-		stroke(10)
-		point(this.pos.x, this.pos.y)
+		// strokeWeight(this.radius*1.5)
+		// stroke(10)
+		// point(this.pos.x, this.pos.y)
 	}
 }

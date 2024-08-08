@@ -39,7 +39,7 @@ function setup() {
 	ballZoneLine = height * 0.75
   
     cannonParticles = {
-      nParts: 30,
+      nParts: 20,
       shotSpeed: [2, 50],
       radius: [5,15],
       shotDir: 0,
@@ -49,7 +49,7 @@ function setup() {
     }
   
     ballParticles = {
-      nParts: 50,
+      nParts: 10,
       shotSpeed: [5, 25],
       radius: [15,30],
       shotDir: 0,
@@ -71,7 +71,7 @@ function setup() {
 function draw() {
 	background(0, 0, 10, 1);
 
-	if (floor(totalScore / 25000) > prevTotalMark) {
+	if (floor(totalScore / 25000) > prevTotalMark && balls.length < 50) {
 		for (let i = 0; i < 2; i++){
 			let ballStartPos = createVector(random(100, width-100), random(100, ballZoneLine-100))
 			let ballRandomColour = color(random(360), 70, 100)
