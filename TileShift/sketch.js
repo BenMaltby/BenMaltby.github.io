@@ -152,3 +152,15 @@ class tile{
 
 	pSystem.process()
   }
+
+function touchStarted(){
+	return false;
+}
+
+function touchMoved(){
+	return false;
+}
+
+function touchEnded(){
+	return false;
+}
