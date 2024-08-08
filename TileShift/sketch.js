@@ -59,18 +59,26 @@ class tile{
   }
   
   let tileSize = 0;
-  let nTiles = 7;
+  let nTiles = 9;
   let startHeight = 0;
   let tileSlots = []
   let tileSelector;
   let curr;
   let mouseLifted = false;
   let tempTile;
+  let pSystem;
   
   let Pallete = [
 	["#8ecae6","#219ebc","#023047","#ffb703","#fb8500"],
 	["#03045e","#0077b6","#00b4d8","#90e0ef","#caf0f8"],
-	["#132a13","#31572c","#4f772d","#90a955","#ecf39e"]
+	["#132a13","#31572c","#4f772d","#90a955","#ecf39e"],
+	["#da2c38","#226f54","#87c38f","#f4f0bb","#43291f"],
+	["#44355b","#31263e","#221e22","#eca72c","#ee5622"],
+	["#780116","#f7b538","#db7c26","#d8572a","#c32f27"],
+	["#f94144","#f3722c","#f8961e","#f9844a","#f9c74f","#90be6d","#43aa8b","#4d908e","#577590","#277da1"],
+	["#004733","#2b6a4d","#568d66","#a5c1ae","#f3f4f6","#dcdfe5","#df8080","#cb0b0a","#ad080f","#8e0413"],
+	["#00193a","#002b53","#023f73","#034780","#7a0213","#a10220","#bf0a26","#cd0c2b","#131313","#262626"],
+	["#39d05c","#35e95f","#35d475","#35ac7a","#347f83","#2e518a","#40288f","#5702a1","#6500a3","#8127b9"]
   ]
   
   function setup() {
@@ -79,6 +87,18 @@ class tile{
 	rectMode(CENTER)
 	
 	tileSelector = new selector()
+	pSystem = new particleSystem()
+
+	placementParticles = {
+		nParts: 40,
+		shotSpeed: [2, 20],
+		radius: [50, 85],
+		shotDir: 0,
+		angleRange: [0, TAU],
+		gravity: 0.1,
+		life: 40,
+		col: color(90)
+	  }
 	
 	tempTile = new tile(-1000, -1000, 10, color(90))
 	
@@ -124,7 +144,11 @@ class tile{
 		sel.presetCol = tempTile.presetCol
 		
 		mouseLifted = false
+		placementParticles.col = color(hue(sel.col), saturation(sel.col), brightness(sel.col))
+		pSystem.addExplosion(curr.pos.x, curr.pos.y, placementParticles)
 	  }
 	  tileSelector.holdingTile = false
 	}
+
+	pSystem.process()
   }
