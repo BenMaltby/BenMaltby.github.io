@@ -6,6 +6,10 @@ let ballLimit = 10;
 let cannonBalls = []
 let cannonsToDelete = new Set()
 
+let totalScore = 0;
+let prevTotalMark = 0;
+let highestMult = 1;
+
 let firstShot = true
 let mouseLifted = false;
 let shotPos;
@@ -67,6 +71,14 @@ function setup() {
 function draw() {
 	background(0, 0, 10, 1);
 
+	if (floor(totalScore / 25000) > prevTotalMark) {
+		for (let i = 0; i < 2; i++){
+			let ballStartPos = createVector(random(100, width-100), random(100, ballZoneLine-100))
+			let ballRandomColour = color(random(360), 70, 100)
+			balls.push(new smartBall(ballStartPos, random(TAU), 5, ballRandomColour, 30, true))
+		}
+		prevTotalMark = floor(totalScore / 25000)
+	}
 
 	for (let c of cannonBalls){
 		c.update()
@@ -92,7 +104,12 @@ function draw() {
 				c.collisionCount ++;
 				
 				let hitScore = c.collisionCount * 50 * 1.3685
-				superText.addText(`${hitScore.toFixed(2)}`, c.pos.x, c.pos.y, c.collisionCount)
+				totalScore += hitScore
+				// superText.addText(`${hitScore.toFixed(2)}`, c.pos.x, c.pos.y, c.collisionCount)
+				if (c.collisionCount > 1){
+					superText.addText(`x${c.collisionCount}`, c.pos.x - 80, c.pos.y - 80, c.collisionCount)
+					highestMult = (c.collisionCount > highestMult) ? c.collisionCount : highestMult
+				}
 
 				let normBetween = p5.Vector.normalize(vBet);
 				normBetween.mult(-1);
@@ -153,6 +170,18 @@ function draw() {
 	pSystem.process()
 
 	superText.processText()
+
+	textSize(60)
+	noStroke()
+	fill(90)
+	let printScore = numberWithCommas(totalScore.toFixed(2))
+	text(`${printScore}`, 200, 100)
+
+	text(`x${highestMult} MULTI`, width - 400, 100)
+}
+
+function numberWithCommas(x) {
+	return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 function touchStarted(){
