@@ -11,5 +11,11 @@
     </main>
     <script src="sketch.js"></script>
 	<script src="../p5-src/particleSys.js"></script>
+	<script>
+		window.addEventListener('beforeunload', function (e) {
+			e.preventDefault();
+			e.returnValue = '';
+		});
+	</script>
   </body>
 </html>
