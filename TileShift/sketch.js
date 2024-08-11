@@ -99,8 +99,8 @@ class tile{
 		angleRange: [0, TAU],
 		gravity: 0.1,
 		life: 40,
-		col: color(90)
-	  }
+		col: color(90)  // default colour
+	}
 	
 	tempTile = new tile(-1000, -1000, 10, color(90))
 	
