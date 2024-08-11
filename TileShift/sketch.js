@@ -7,13 +7,13 @@ class tile{
 	}
 	
 	static queryTile(){
-	  let mVec = createVector(constrain(mouseX, 1, width-1),
+	  let mVec = createVector(constrain(mouseX, startHorizontal+1, width-startHorizontal-1),
 				 constrain(mouseY,startHeight+1,height-startHeight-1))
-	  let mouseTile = createVector(floor(mVec.x/tileSize),
+	  let mouseTile = createVector(floor((mVec.x-startHorizontal)/tileSize),
 								  floor((mVec.y-startHeight)/tileSize))
 	  
 	  for (let t of tileSlots){
-		let tempTile = createVector(floor(t.pos.x/tileSize),
+		let tempTile = createVector(floor((t.pos.x - startHorizontal)/tileSize),
 								   floor((t.pos.y-startHeight)/tileSize))
 		if (mouseTile.x == tempTile.x && mouseTile.y == tempTile.y){
 		  return t
@@ -61,6 +61,7 @@ class tile{
   let tileSize = 0;
   let nTiles = 9;
   let startHeight = 0;
+  let startHorizontal = 0;
   let tileSlots = []
   let tileSelector;
   let curr;
@@ -102,14 +103,19 @@ class tile{
 	
 	tempTile = new tile(-1000, -1000, 10, color(90))
 	
-	tileSize = width / nTiles;
-	startHeight = (height - width) / 2
+	if (width < height){
+		tileSize = width / nTiles;
+		startHeight = (height - width) / 2
+	}else{
+		tileSize = height / nTiles;
+		startHorizontal = (width - height) / 2
+	}
 	
 	let rIdx = floor(random(Pallete.length))
 	for (let y = 0; y < nTiles; y++){
 	  for (let x = 0; x < nTiles; x++){
 		tileSlots.push(new tile(
-		  x * tileSize + tileSize/2,
+		  x * tileSize + tileSize/2 + startHorizontal,
 		  y * tileSize + tileSize/2 + startHeight,
 		  tileSize,
 		  color(random(Pallete[rIdx]))
