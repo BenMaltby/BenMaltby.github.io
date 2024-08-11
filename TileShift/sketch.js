@@ -103,10 +103,10 @@ class tile{
 	
 	tempTile = new tile(-1000, -1000, 10, color(90))
 	
-	if (width < height){
+	if (width < height){  // portrait
 		tileSize = width / nTiles;
 		startHeight = (height - width) / 2
-	}else{
+	}else{  // landscape
 		tileSize = height / nTiles;
 		startHorizontal = (width - height) / 2
 	}
