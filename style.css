@@ -20,47 +20,58 @@ canvas{
 }
 
 .tile-column {
-	/* border: 3px solid red; */
-	margin-top: 100px;
-	margin-bottom: 100px;
+	/* border: 3px solid rgb(4, 255, 46); */
+	margin: 100px 150px;
 	display: flex;
-	gap: 100px;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-evenly;
+	flex-wrap: wrap;
+	gap: 20px 20px;
+	justify-content: center;
 }
 
 .game-tile {
-	border: 1px solid white;
+	border: 5px solid red;
+	background-color: #222222;
+	color: #eeeeee;
+	flex: 1 0 25vw;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-evenly;
-	background-color: #222222;
-	box-shadow: 20px 20px #101010cc;
-	width: 60vw;
-	height: 500px;
+	justify-content: space-between;
+	align-items: center;
+	width: 25vw;
 	text-align: center;
 	font-family: Poppins, sans-serif;
-	color: #eeeeee;
 	border-radius: 20px;
+	transition-timing-function: linear;
+	transition-duration: 0.05s;
+	padding: 20px 0px;
+	/* aspect-ratio: 4/3; */
+	/* box-shadow: 20px 20px #101010cc; */
+}
+
+.game-tile:hover {
+	transform: scale(1.06);
 }
 
 #game-title {
-	/* border: 3px solid red; */
+	/* border: 3px solid orange; */
 	font-family: Raleway, sans-serif;
+	margin-bottom: 20px;
 	margin: 0px;
-	padding: 0px;
-	font-size: 70px;
+	width: 100%;
+	font-size: 60px;
 	background-color: #101010;
 }
 
 #game-desc {
-	/* border: 3px solid red; */
+	/* border: 3px solid rgb(177, 0, 177); */
 	font-family: Poppins, sans-serif;
 	font-style: italic;
-	font-size: 40px;
+	font-size: 35px;
 	padding: 0px;
-	margin: 0px 60px;
+	height: 110px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 #play-button {
@@ -69,8 +80,9 @@ canvas{
 	text-align: center;
 	text-decoration: none;
 	font-size: 70px;
+	width: 60%;
 	padding: 0px 30px;
-	margin: 0px 60px;
+	/* margin: 0px 60px 20px 60px; */
 	border-radius: 10px;
 	color: white;
 }
@@ -108,10 +120,17 @@ canvas{
 	color: red;
 }
 
+#game-image{
+	width: 100%;
+	height: 100%;
+	border-radius: 15px;
+}
+
 @media only screen 
   and (max-width: 1200px){
+
 	.game-tile{
-		width: 90vw
+		flex: 1 0 85vw;
 	}
 
 	.footer {
