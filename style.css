@@ -40,10 +40,10 @@ canvas{
 	width: 25vw;
 	text-align: center;
 	font-family: Poppins, sans-serif;
-	border-radius: 20px;
+	border-radius: 50px;
 	transition-timing-function: linear;
 	transition-duration: 0.05s;
-	padding: 20px 0px;
+	padding: 45px 0px;
 	/* aspect-ratio: 4/3; */
 	/* box-shadow: 20px 20px #101010cc; */
 }
