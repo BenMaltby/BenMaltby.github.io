@@ -129,8 +129,20 @@ canvas{
 @media only screen 
   and (max-width: 1200px){
 
+	.tile-column {
+		gap: 200px;
+	}
+
 	.game-tile{
 		flex: 1 0 85vw;
+	}
+
+	#game-title {
+		font-size: 90px;
+	}
+
+	#game-desc {
+		font-size: 55px;
 	}
 
 	.footer {
