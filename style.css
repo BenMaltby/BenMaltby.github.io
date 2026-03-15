@@ -120,10 +120,27 @@ canvas{
 	color: red;
 }
 
+.game-tile-img {
+	border: 5px solid white;
+	background-color: #222222;
+	color: #eeeeee;
+	width: 550px;
+	height: 300px;
+	text-align: center;
+	font-family: Poppins, sans-serif;
+	border-radius: 50px;
+	transition-timing-function: linear;
+	transition-duration: 0.05s;
+}
+
+.game-tile-img:hover {
+	transform: scale(1.06);
+}
+
 #game-image{
 	width: 100%;
 	height: 100%;
-	border-radius: 15px;
+	border-radius: 50px;
 }
 
 @media only screen 
@@ -135,6 +152,14 @@ canvas{
 
 	.game-tile{
 		flex: 1 0 85vw;
+	}
+
+	.game-tile-img {
+		transform: scale(1.4)
+	}
+
+	.game-tile-img:hover {
+		transform: scale(1.46);
 	}
 
 	#game-title {
