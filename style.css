@@ -147,7 +147,7 @@ canvas{
   and (max-width: 1200px){
 
 	.tile-column {
-		gap: 200px;
+		gap: 100px;
 	}
 
 	.game-tile{

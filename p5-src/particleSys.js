@@ -100,7 +100,7 @@ class explosion{
 		// Track highest point in explosion
 		this.hPoint = (p.pos.y < this.hPoint) ? p.pos.y : this.hPoint
 
-		// this.triangleRot(p.pos, p.vel, p.col, 20, 0.3, 3)
+		// this.triangleRot(p.pos, p.vel, p.col, 2, 1, 10)
 		// fill(p.col)
 		
 		p.col.setAlpha(fade)      

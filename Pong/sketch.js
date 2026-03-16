@@ -88,7 +88,7 @@ class computer extends paddle
     // this.pos.y = constrain(ball.pos.y - (this.h/2), 0, height - this.h);
 	if (GameOver == false){
 		this.vel.y = ball.pos.y - (this.pos.y + this.h/2);
-		this.vel.limit(this.maxSpeed-0.5);  // CPU is slightly slower than player
+		this.vel.limit(this.maxSpeed*1);  // CPU is slightly slower than player
 		this.pos.add(this.vel);
 		this.pos.y = constrain(this.pos.y, 0, height - this.h)
 	}
@@ -109,9 +109,14 @@ class pongBall
   }
   
   show(){
-    noStroke();
+    // noStroke();
+	strokeWeight(2);
+	stroke(0, 0, 80);
     fill(this.col);
     circle(this.pos.x, this.pos.y, this.rad*2);
+
+	strokeWeight(10);
+	point(this.pos.x, this.pos.y);
   }
   
   process(paddles){
@@ -143,6 +148,8 @@ let collisionParticles;
 
 let pw = 30;
 let ph = 120;
+let playerScore = 0;
+let cpuScore = 0;
 
 function setup() {
 	// Check if playing on phone
@@ -159,9 +166,9 @@ function setup() {
 		shotSpeed: [0, 2],
 		radius: [3, 7],
 		shotDir: 0,
-		angleRange: [-0.75, 0.75],
-		gravity: 0.25,
-		life: 40,
+		angleRange: [-1, 1],
+		gravity: 0.1,
+		life: 50,
 		col: color(0, 40, 100)
 	}
 
@@ -171,11 +178,38 @@ function setup() {
 }
 
 function draw() {
-	background(50);
+	background(0, 0, 20);	
+	drawCenterLine();
+	drawRedZones();
+	drawBorder();
 
 	playerPaddle.process()
 	CPUpaddle.process(ball);
 	ball.process([playerPaddle, CPUpaddle]);
 
 	pSystem.process()  // Handle particles
+}
+
+function drawCenterLine(){
+	stroke(0, 0, 100);
+	strokeWeight(4);
+	for (let i = 0; i < height; i+=20){
+		line(width/2, i, width/2, i+10);
+	}
+}
+
+function drawBorder(){
+	stroke(0, 0, 100);
+	strokeWeight(10);
+	line(0, 0, width, 0);
+	line(0, height, width, height);
+	line(0, 0, 0, height);
+	line(width, 0, width, height);
+}
+
+function drawRedZones(){
+	noStroke();
+	fill(0, 80, 100, 0.25);
+	rect(0, 0, pw + 50, height);
+	rect(width - pw - 50, 0, pw + 50, height);
 }
