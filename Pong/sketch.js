@@ -169,9 +169,9 @@ function setup() {
 		col: color(0, 40, 100)
 	}
 
-	playerPaddle = new player(50, 200, pw, ph);
-	CPUpaddle = new computer(resolution - pw - 50, 200, pw, ph);
-	ball = new pongBall(250, 250, 20);
+	playerPaddle = new player(50, resolution/2 - ph/2, pw, ph);
+	CPUpaddle = new computer(resolution - pw - 50, resolution/2 - ph/2, pw, ph);
+	ball = new pongBall(resolution/2, resolution/2, 20);
 }
 
 function draw() {
@@ -179,12 +179,28 @@ function draw() {
 	drawCenterLine();
 	drawRedZones();
 	drawBorder();
+	displayPlayerScore();
+	displayCPUScore();
 
 	playerPaddle.process()
 	CPUpaddle.process(ball);
 	ball.process([playerPaddle, CPUpaddle]);
 
 	pSystem.process()  // Handle particles
+}
+
+function displayPlayerScore(){
+	textSize(150);
+	fill(0, 0, 100);
+	textAlign(CENTER, TOP);
+	text(playerScore, width/4, 70);
+}
+
+function displayCPUScore(){
+	textSize(150);
+	fill(0, 0, 100);
+	textAlign(CENTER, TOP);
+	text(cpuScore, width*3/4, 70);
 }
 
 function drawCenterLine(){
