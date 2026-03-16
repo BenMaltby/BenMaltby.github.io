@@ -6,27 +6,34 @@ class paddle
     this.h = h;
     this.col = color(0, 0, 100);
     this.vel = createVector();
-    this.maxSpeed = 3;
+    this.maxSpeed = 8;
   }
   
-  isCollided(ball){
-    let cPoint = createVector(
-      constrain(ball.pos.x, this.pos.x, this.pos.x + this.w),
-      constrain(ball.pos.y, this.pos.y, this.pos.y + this.h)
-    )
-    if (ball.pos.x >= this.pos.x && ball.pos.x <= this.pos.x + this.w){
-      GameOver = true;
-    }
-    let d = ball.pos.dist(cPoint);
-    if (d <= ball.rad){
-      ball.vel = p5.Vector.sub(ball.pos, cPoint)
-      ball.vel.setMag(ball.maxSpeed);
-      ball.vel.add(this.vel);
-      
-      return true;
-    }
-    return false;
-  }
+	isCollided(ball){
+		let nextPos = p5.Vector.add(ball.pos, ball.vel);
+		let cPoint = createVector(
+			constrain(nextPos.x, this.pos.x, this.pos.x + this.w),
+			constrain(nextPos.y, this.pos.y, this.pos.y + this.h)
+		)
+		if (ball.pos.x >= this.pos.x && ball.pos.x <= this.pos.x + this.w){
+			GameOver = true;
+		}
+		let d = nextPos.dist(cPoint);
+		if (d <= ball.rad){
+			ball.vel = p5.Vector.sub(ball.pos, cPoint)
+			ball.vel.setMag(ball.speed);
+			ball.vel.add(this.vel);
+			
+			// Collision particles
+			collisionParticles.shotDir = ball.vel.heading();
+			collisionParticles.shotSpeed = [ball.speed*0.25, ball.speed*0.75];
+			pSystem.addExplosion(nextPos.x, nextPos.y, collisionParticles)
+
+			ball.speed = constrain(ball.speed + 0.5, 0, ball.maxSpeed);  // acc rate of ball
+			return true;
+		}
+		return false;
+  	}
   
   show(){
     noStroke();
@@ -42,6 +49,7 @@ class player extends paddle
   }
   
   process(){
+    // Allow keyboard input
     if (keyIsDown(UP_ARROW) === true && GameOver == false){
       this.vel.y -= this.maxSpeed;
     }
@@ -50,6 +58,16 @@ class player extends paddle
     }
     if ((keyIsDown(UP_ARROW) === false && keyIsDown(DOWN_ARROW) === false) || GameOver == true){
       this.vel.y = 0
+    }
+    
+    //Allow touchscreen input
+    if (mouseIsPressed && GameOver == false){
+      if (mouseY < resolution/2){
+        this.vel.y -= this.maxSpeed;
+      }
+      if (mouseY >= resolution/2){
+        this.vel.y += this.maxSpeed;
+      }
     }
     
     this.vel.limit(this.maxSpeed);
@@ -67,8 +85,14 @@ class computer extends paddle
   }
 
   process(ball){
-    this.pos.y = constrain(ball.pos.y - (this.h/2), 0, height - this.h);
-    
+    // this.pos.y = constrain(ball.pos.y - (this.h/2), 0, height - this.h);
+	if (GameOver == false){
+		this.vel.y = ball.pos.y - (this.pos.y + this.h/2);
+		this.vel.limit(this.maxSpeed-0.5);  // CPU is slightly slower than player
+		this.pos.add(this.vel);
+		this.pos.y = constrain(this.pos.y, 0, height - this.h)
+	}
+
     this.show();
   }
 }
@@ -78,9 +102,10 @@ class pongBall
   constructor(x, y, r){
     this.pos = createVector(x, y);
     this.rad = r;
-    this.col = color(0, 0, 100);
-    this.maxSpeed = 4;
-    this.vel = createVector(-this.maxSpeed, 0)
+    this.col = color(0, 80, 100);
+	this.maxSpeed = 20;
+    this.speed = 4;
+    this.vel = createVector(-this.speed, 0)
   }
   
   show(){
@@ -112,20 +137,45 @@ let playerPaddle;
 let CPUpaddle;
 let ball;
 let GameOver = false;
+let resolution;
+let pSystem;
+let collisionParticles;
+
+let pw = 30;
+let ph = 120;
 
 function setup() {
-  createCanvas(500, 500);
-  colorMode(HSB)
-  
-  playerPaddle = new player(30, 200, 20, 70);
-  CPUpaddle = new computer(450, 200, 20, 70);
-  ball = new pongBall(250, 250, 10);
+	// Check if playing on phone
+	resolution = (windowHeight > windowWidth) ? windowWidth : windowHeight;
+	let cnv = createCanvas(resolution, resolution)
+	cnv.position(windowWidth/2 - resolution/2, windowHeight/2 - resolution/2);
+	colorMode(HSB)
+
+	// Particle system for ball explosion
+	pSystem = new particleSystem()
+	// Collision Parameters
+	collisionParticles = {
+		nParts: 50,
+		shotSpeed: [0, 2],
+		radius: [3, 7],
+		shotDir: 0,
+		angleRange: [-0.75, 0.75],
+		gravity: 0.25,
+		life: 40,
+		col: color(0, 40, 100)
+	}
+
+	playerPaddle = new player(50, 200, pw, ph);
+	CPUpaddle = new computer(resolution - pw - 50, 200, pw, ph);
+	ball = new pongBall(250, 250, 20);
 }
 
 function draw() {
-  background(50);
-  
-  playerPaddle.process()
-  CPUpaddle.process(ball);
-  ball.process([playerPaddle, CPUpaddle]);
+	background(50);
+
+	playerPaddle.process()
+	CPUpaddle.process(ball);
+	ball.process([playerPaddle, CPUpaddle]);
+
+	pSystem.process()  // Handle particles
 }
