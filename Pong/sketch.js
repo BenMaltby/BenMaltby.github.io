@@ -114,9 +114,6 @@ class pongBall
 	stroke(0, 0, 80);
     fill(this.col);
     circle(this.pos.x, this.pos.y, this.rad*2);
-
-	strokeWeight(10);
-	point(this.pos.x, this.pos.y);
   }
   
   process(paddles){
