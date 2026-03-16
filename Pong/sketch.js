@@ -17,29 +17,47 @@ class paddle
 		)
 		if (ball.pos.x >= this.pos.x && ball.pos.x <= this.pos.x + this.w){
 			GameOver = true;
+
+			// Update score
+			if (cpuScore + playerScore == round){
+				if (this instanceof player){
+					cpuScore++;
+				} else {
+					playerScore++;
+				}
+			}
+			round++;
+
+			// Reset ball and paddles
+			ball.pos = createVector(width/2, height/2);
+			ball.vel = createVector(-ball.speed, 0);
+			playerPaddle.pos.y = height/2 - playerPaddle.h/2;
+			CPUpaddle.pos.y = height/2 - CPUpaddle.h/2;
+			GameOver = false;
 		}
+
 		let d = nextPos.dist(cPoint);
-		if (d <= ball.rad){
+		if (d <= ball.rad){  // Collision!
 			ball.vel = p5.Vector.sub(ball.pos, cPoint)
 			ball.vel.setMag(ball.speed);
 			ball.vel.add(this.vel);
-			
+
 			// Collision particles
 			collisionParticles.shotDir = ball.vel.heading();
 			collisionParticles.shotSpeed = [ball.speed*0.25, ball.speed*0.75];
 			pSystem.addExplosion(nextPos.x, nextPos.y, collisionParticles)
 
-			ball.speed = constrain(ball.speed + 0.5, 0, ball.maxSpeed);  // acc rate of ball
+			ball.speed = constrain(ball.speed + 0.25, 0, ball.maxSpeed);  // acc rate of ball
 			return true;
 		}
 		return false;
   	}
   
-  show(){
-    noStroke();
-    fill(this.col);
-    rect(this.pos.x, this.pos.y, this.w, this.h);
-  }
+	show(){
+		noStroke();
+		fill(this.col);
+		rect(this.pos.x, this.pos.y, this.w, this.h);
+	}
 }
 
 class player extends paddle
@@ -147,6 +165,7 @@ let pw = 30;
 let ph = 120;
 let playerScore = 0;
 let cpuScore = 0;
+let round = 0;
 
 function setup() {
 	// Check if playing on phone
@@ -191,14 +210,16 @@ function draw() {
 
 function displayPlayerScore(){
 	textSize(150);
-	fill(0, 0, 100);
+	fill(0, 0, 30);
+	stroke(0, 0, 30);
 	textAlign(CENTER, TOP);
 	text(playerScore, width/4, 70);
 }
 
 function displayCPUScore(){
 	textSize(150);
-	fill(0, 0, 100);
+	fill(0, 0, 30);
+	stroke(0, 0, 30);
 	textAlign(CENTER, TOP);
 	text(cpuScore, width*3/4, 70);
 }
