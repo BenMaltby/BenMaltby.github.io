@@ -68,22 +68,22 @@ class player extends paddle
   
   process(){
     // Allow keyboard input
-    if (keyIsDown(UP_ARROW) === true && GameOver == false){
+    if ((keyIsDown(UP_ARROW) === true || keyIsDown(LEFT_ARROW)) === true && GameOver == false){
       this.vel.y -= this.maxSpeed;
     }
-    if (keyIsDown(DOWN_ARROW) === true && GameOver == false){
+    if ((keyIsDown(DOWN_ARROW) === true || keyIsDown(RIGHT_ARROW) === true) && GameOver == false){
       this.vel.y += this.maxSpeed;
     }
-    if ((keyIsDown(UP_ARROW) === false && keyIsDown(DOWN_ARROW) === false) || GameOver == true){
+    if ((keyIsDown(UP_ARROW) === false && keyIsDown(DOWN_ARROW) === false && keyIsDown(LEFT_ARROW) === false && keyIsDown(RIGHT_ARROW) === false) || GameOver == true){
       this.vel.y = 0
     }
     
     //Allow touchscreen input
     if (mouseIsPressed && GameOver == false){
-      if (mouseY < resolution/2){
+      if (mouseX < resolution/2){
         this.vel.y -= this.maxSpeed;
       }
-      if (mouseY >= resolution/2){
+      if (mouseX >= resolution/2){
         this.vel.y += this.maxSpeed;
       }
     }
